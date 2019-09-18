@@ -22,7 +22,7 @@ describe('server responses', () => {
     let { req, res } = server.mock('/', 'GET');
     httpHandler.router(req, res);
     expect(res._responseCode).to.equal(200);
-    expect(res._data.toString()).to.equal('up');
+    expect(res._data.toString()).to.equal(/(up|down|left|right)/);
     done();
   });
 

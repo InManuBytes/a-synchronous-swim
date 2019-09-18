@@ -13,14 +13,28 @@ module.exports.initialize = queue => {
   messageQueue = queue;
 };
 
+let randomDirection = () => {
+  let directions = ['left', 'right', 'up', 'down'];
+  let number = Math.floor(Math.random() * Math.floor(4));
+  return directions[number];
+};
+
 module.exports.router = (req, res, next = () => {}) => {
   console.log('Serving request type ' + req.method + ' for url ' + req.url);
-  if (req.method === 'GET') {
+  if (req.method === 'OPTIONS') {
     res.writeHead(200, headers);
-    console.log('RES', res);
     res.end();
     next();
   }
+  if (req.method === 'GET') {
+    res.writeHead(200, headers);
+
+    res.end(randomDirection());
+    console.log('RES', res);
+    next();
+  }
+  // the following three lines were supplied to us, I just copied them into the block of the if statement I wrote on line 18. Using postman I was able to get the response to console log in the terminal with line 20
+
   // res.writeHead(200, headers);
   // res.end();
   // next(); // invoke next() at the end of a request to help with testing!
