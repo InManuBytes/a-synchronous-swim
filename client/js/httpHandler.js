@@ -1,17 +1,19 @@
 (function() {
-
   const serverUrl = 'http://127.0.0.1:3000';
 
   //
   // TODO: build the swim command fetcher here
   //
+  // write an AJAX request for a GET request connecting client and server
+  // wrap the request with setInterval to periodically request a random swim command
+  // on success -> SwimTeam.move('swim command-response from GET request')
 
   /////////////////////////////////////////////////////////////////////
   // The ajax file uplaoder is provided for your convenience!
   // Note: remember to fix the URL below.
   /////////////////////////////////////////////////////////////////////
 
-  const ajaxFileUplaod = (file) => {
+  const ajaxFileUplaod = file => {
     var formData = new FormData();
     formData.append('file', file);
     $.ajax({
@@ -45,5 +47,4 @@
 
     ajaxFileUplaod(file);
   });
-
 })();
