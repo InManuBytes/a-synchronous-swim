@@ -30,7 +30,7 @@ module.exports.router = (req, res, next = () => {}) => {
     res.writeHead(200, headers);
 
     res.end(randomDirection());
-    console.log('RES', res);
+//    console.log('RES', res);
     next();
   }
   // the following three lines were supplied to us, I just copied them into the block of the if statement I wrote on line 18. Using postman I was able to get the response to console log in the terminal with line 20

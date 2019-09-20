@@ -7,6 +7,20 @@
   // write an AJAX request for a GET request connecting client and server
   // wrap the request with setInterval to periodically request a random swim command
   // on success -> SwimTeam.move('swim command-response from GET request')
+  console.log("hey")
+
+
+  setInterval(() => {$.ajax({
+    url: serverUrl,
+    type: 'GET',
+    contentType: "text",
+    //dataType: 'json',
+    //data:
+    success: (data) => {SwimTeam.move(data)},
+    error: function(message) {
+      console.log("error:", message);
+    },
+  })}, 2000);
 
   /////////////////////////////////////////////////////////////////////
   // The ajax file uplaoder is provided for your convenience!
