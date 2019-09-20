@@ -53,7 +53,6 @@ module.exports.initialize = (callback) => {
       // collect the individual characters/keystrokes
       message += (mappedChars[key.name] || key.name);
       logKeypress(key.name);
-      console.log(message);
     }
 
   });

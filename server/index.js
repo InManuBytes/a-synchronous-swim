@@ -10,7 +10,8 @@ const httpHandler = require('./js/httpHandler');
 keypressHandler.initialize(
   //message => {
   //console.log(`Message received: ${message}`)};//working
-  messageQueue.enqueue // actually takes in a callback as an argument and will then call it on the message
+  messageQueue.enqueue // actually takes in a callback as an argument 
+  //and will then call it on the message
 );
 httpHandler.initialize(messageQueue) //will pass on the messages array and the related methods
 
