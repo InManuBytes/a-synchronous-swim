@@ -3,8 +3,8 @@ const path = require('path');
 const headers = require('./cors');
 const multipart = require('./multipartUtils');
 const http = require('http');
-const {messages, dequeue} = require('./messageQueue');
-//messageQueue = {messages:[],enqueue:fn,dequeue:fn}
+//const {messages, dequeue} = require('./messageQueue');
+
 
 // Path for the background image ///////////////////////
 module.exports.backgroundImageFile = path.join('.', 'background.jpg');
@@ -12,7 +12,8 @@ module.exports.backgroundImageFile = path.join('.', 'background.jpg');
 
 let messageQueue = null;
 
-// this will take in an array of messages
+// we pass in messageQueue which includes messages and the related functions
+//messageQueue = {messages=[...msg],enqueue:fn,dequeue:fn}
 module.exports.initialize = queue => {
   messageQueue = queue;
   console.log("messageQueue", messageQueue);
@@ -38,10 +39,12 @@ module.exports.router = (req, res, next = () => {}) => {
     // res.end(randomDirection()); // just checking to see the response works
     // make sure we're sending the data back with right type
     if (messageQueue !== null) {
-      res.end(messageQueue[0])
-      dequeue();
-      messageQueue = messages;
+      // res.end(messageQueue[0])
+      // dequeue();
+      // messageQueue = messages;
       // somehow we need to call dequeue and change messagequeue
+      res.end(messageQueue.dequeue())//this is pass the first command into the body of the response
+      // and at the same time update the messages array
       next();
     } else {
       res.end(); //send first command over to the client
