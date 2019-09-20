@@ -2,9 +2,16 @@
 
 
 const keypressHandler = require('./js/keypressHandler');
-keypressHandler.initialize(message => console.log(`Message received: ${message}`));
 
+//every time there is a keypress we should save them in the messageQueue?
+const messageQueue = require('./js/messageQueue');
 const httpHandler = require('./js/httpHandler');
+
+keypressHandler.initialize(message => {
+  console.log(`Message received: ${message}`);
+  messageQueue.enqueue(message);//working
+  httpHandler.initialize(messageQueue.messages);
+});
 
 
 const http = require('http');

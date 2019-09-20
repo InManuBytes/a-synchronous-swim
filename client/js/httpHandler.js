@@ -13,14 +13,14 @@
   setInterval(() => {$.ajax({
     url: serverUrl,
     type: 'GET',
-    contentType: "text",
+    contentType: "tex",
     //dataType: 'json',
     //data:
     success: (data) => {SwimTeam.move(data)},
     error: function(message) {
       console.log("error:", message);
     },
-  })}, 2000);
+  })}, 3000);
 
   /////////////////////////////////////////////////////////////////////
   // The ajax file uplaoder is provided for your convenience!

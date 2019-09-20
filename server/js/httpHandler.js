@@ -3,14 +3,19 @@ const path = require('path');
 const headers = require('./cors');
 const multipart = require('./multipartUtils');
 const http = require('http');
+const {messages, dequeue} = require('./messageQueue');
+//messageQueue = {messages:[],enqueue:fn,dequeue:fn}
 
 // Path for the background image ///////////////////////
 module.exports.backgroundImageFile = path.join('.', 'background.jpg');
 ////////////////////////////////////////////////////////
 
 let messageQueue = null;
+
+// this will take in an array of messages
 module.exports.initialize = queue => {
   messageQueue = queue;
+  console.log("messageQueue", messageQueue);
 };
 
 let randomDirection = () => {
@@ -26,13 +31,27 @@ module.exports.router = (req, res, next = () => {}) => {
     res.end();
     next();
   }
+// why is it calling so many GET requests
   if (req.method === 'GET') {
     res.writeHead(200, headers);
-
-    res.end(randomDirection());
-//    console.log('RES', res);
-    next();
-  }
+    // call initialize with the messages array
+    // res.end(randomDirection()); // just checking to see the response works
+    // make sure we're sending the data back with right type
+    if (messageQueue !== null) {
+      res.end(messageQueue[0])
+      dequeue();
+      messageQueue = messages;
+      // somehow we need to call dequeue and change messagequeue
+      next();
+    } else {
+      res.end(); //send first command over to the client
+      next();
+    }
+    // feed one at a time to the get
+    // so we can dequeue every time we do it
+    // call initialize again to change message array
+    // console.log('RES', res);
+    }
   // the following three lines were supplied to us, I just copied them into the block of the if statement I wrote on line 18. Using postman I was able to get the response to console log in the terminal with line 20
 
   // res.writeHead(200, headers);
