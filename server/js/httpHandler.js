@@ -32,7 +32,92 @@ module.exports.router = (req, res, next = () => {}) => {
     res.end();
     next();
   }
-  // why is it calling so many GET requests
+  // for post requests
+  if (req.method === 'POST') {
+    // new background image
+    if (req.url === "/background.jpg") {
+      //----------------------------------------------------------
+      //   _________ __
+      //   /   _____//  |________   ____ _____    _____   ______
+      //   \_____  \\   __\_  __ \_/ __ \\__  \  /     \ /  ___/
+      //    _____\  \|  |  |  | \/\  ___/ / __ \|  Y Y  \\___ \
+      //  /_______  /|__|  |__|    \____ >____  /__|_|  /____  >
+      //          \/                   \/     \/      \/     \/
+      // In a Node.js based HTTP server:
+      // REQ request is a readable stream, and
+      // RES response is a writable stream
+      // To write data to a writable stream you need to call write() on the stream instance.
+      // We need a write stream instance for our backgroundImageFile:
+      //
+      // UNCOMMENT THE LINES 54-61 BELOW TO USE STREAMS
+      //
+      var writeImageStream = fs.createWriteStream(this.backgroundImageFile);
+      req.on('data', chunk => {
+        console.log("overwriting file");
+        writeImageStream.write(chunk);
+      });
+      res.writeHead(201, headers);
+      res.end();
+      next();
+      // ^ This way of solving it is actually part of the advanced content...
+      //
+      // You could also do it with fs.writeFile, but you have to have the right
+      // kind of fileData... I wasn't able to get it be the right type of file data
+      // while messing around with fs.writeFile, it kept giving me an error for using a string
+      // which is why I ended up looking around google and found streams.
+      // The syntax for fs.writeFile:
+      //    fs.writeFile(file, fileData, (err) => {})
+      // where fileData is either a string or Buffer,
+      // "The encoding option is ignored if data is a buffer."
+      // When you console.log(data) on line 68 => <Buffer ::hex:: >
+      //
+      // When I saved the data as a string this didn't work...
+      // The syntax for getting the data is:
+      //     let rawImageData = '';
+      //     req.on('data', chunk => {
+      //       rawImageData += chunk;
+      //     });
+      //
+      // So first you have to declare the right raw data
+      // let rawImageData = ?;
+      // I guess the only other option is a Buffer
+      // ----------------------------------------------
+      // __________        _____  _____
+      // \______   \__  ___/ ____\/ ____\___________
+      //  |    |  _/  | | \   __\\   __\/ __ \_  __ \
+      //  |    |   \  |_| /|  |   |  | \  ___/|  | \/
+      //  |______  /_____/ |__|   |__|  \___  >__|
+      //         \/                        \/
+      // What is a Buffer?
+      // FROM:
+      // https://nodejs.org/api/buffer.html#buffer_class_method_buffer_from_arraybuffer_byteoffset_length
+      // The Buffer class is a global type for dealing with binary data directly.
+      // It can be constructed in a variety of ways.
+      // Buffer.from('string', encoding) would work for us, possibly
+      //
+      // then you can grab the chunks and add it to that rawImageData variable
+      // and then pass it onto fs.writeFile:
+      // I guess technically you could create a buffer from the string
+      //
+      // UNCOMMENT THE LINES BELOW TO USE fs.writeFILE !!not passing tests
+      //
+      // let rawImageData = '';
+      // req.on('data', chunk => {
+      //  rawImageData += chunk //adding it here depends on the type of your rawImageData
+      // })
+      // let rawImageBuffer = Buffer.from(rawImageData);
+      // fs.writeFile(this.backgroundImageFile, rawImageBuffer, (err) => {
+      //   if (err) {
+      //     res.writeHead(401, headers);
+      //   } else {
+      //     res.writeHead(201, headers);
+      //   }
+      //   res.end();
+      //   next();
+      // });
+    }
+  }
+  // why is it calling so many GET requests?
   if (req.method === 'GET') {
     if (req.url === '/') {
       res.writeHead(200, headers); // is this showing up in the response?
