@@ -43,11 +43,10 @@ module.exports.router = (req, res, next = () => {}) => {
         // somehow we need to call dequeue and change messagequeue
         res.end(messageQueue.dequeue()); //this passes the first command into the body of the response
         // and at the same time update the messages array
-        next();
       } else {
         res.end('up'); //default for no saved keypresses
-        next();
       }
+      next();
     } else if (req.url === '/background.jpg') {
       // sets 'background.jpg' as endpoint
       console.log('REQ.URL', req.url);
@@ -56,13 +55,13 @@ module.exports.router = (req, res, next = () => {}) => {
           console.log('ERR', err);
           res.writeHead(404, headers);
           res.end();
-          next();
         } else {
+          console.log('getting background image');
           res.writeHead(200, headers);
           res.write(data, 'binary');
           res.end();
-          next();
         }
+        next();
       });
     }
 
