@@ -34,9 +34,7 @@ module.exports.router = (req, res, next = () => {}) => {
   }
   // why is it calling so many GET requests
   if (req.method === 'GET') {
-    console.log('req.url', req.url);
     if (req.url === '/') {
-      console;
       res.writeHead(200, headers); // is this showing up in the response?
       // call initialize with the messages array
       // res.end(randomDirection()); // just checking to see the response works
@@ -50,24 +48,41 @@ module.exports.router = (req, res, next = () => {}) => {
         res.end('up'); //default for no saved keypresses
         next();
       }
-    }
-    var imageURL = /.\.jpg/;
-    if (imageURL.test(req.url)) {
-      fs.readFile(req.url, 'Base64', (err, data) => {
+    } else if (req.url === '/background.jpg') {
+      // sets 'background.jpg' as endpoint
+      console.log('REQ.URL', req.url);
+      fs.readFile(this.backgroundImageFile, (err, data) => {
         if (err) {
-          res.writeHead(404, headers); //throw 404
-          console.log(err);
+          console.log('ERR', err);
+          res.writeHead(404, headers);
           res.end();
           next();
         } else {
-          //found
-          console.log('DATA', data);
-          res.writeHead(200, { 'Content-Type': 'image/jpg' });
-          res.end(data, 'Base64');
+          res.writeHead(200, headers);
+          res.write(data, 'binary');
+          res.end();
           next();
         }
       });
     }
+
+    // var imageURL = /.\.jpg/;
+    // if (imageURL.test(req.url)) {
+    //   fs.readFile(req.url, 'Base64', (err, data) => {
+    //     if (err) {
+    //       res.writeHead(404, headers); //throw 404
+    //       console.log(err);
+    //       res.end();
+    //       next();
+    //     } else {
+    //       //found
+    //       console.log('DATA', data);
+    //       res.writeHead(200, { 'Content-Type': 'image/jpg' });
+    //       res.end(data, 'Base64');
+    //       next();
+    //     }
+    //   });
+    // }
   }
   // the following three lines were supplied to us, I just copied them into the block of the if statement I wrote on line 18. Using postman I was able to get the response to console log in the terminal with line 20
 
