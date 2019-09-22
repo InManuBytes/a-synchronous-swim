@@ -5,9 +5,9 @@ const multipart = require('./multipartUtils');
 const http = require('http');
 //const {messages, dequeue} = require('./messageQueue');
 
-
 // Path for the background image ///////////////////////
 module.exports.backgroundImageFile = path.join('.', 'background.jpg');
+// the background image lives in ./background.jpg
 ////////////////////////////////////////////////////////
 
 let messageQueue = null;
@@ -16,7 +16,7 @@ let messageQueue = null;
 //messageQueue = {messages=[...msg],enqueue:fn,dequeue:fn}
 module.exports.initialize = queue => {
   messageQueue = queue;
-  console.log("messageQueue", messageQueue);
+  console.log('messageQueue', messageQueue);
 };
 
 let randomDirection = () => {
@@ -32,29 +32,43 @@ module.exports.router = (req, res, next = () => {}) => {
     res.end();
     next();
   }
-// why is it calling so many GET requests
+  // why is it calling so many GET requests
   if (req.method === 'GET') {
-    res.writeHead(200, headers);
-    // call initialize with the messages array
-    // res.end(randomDirection()); // just checking to see the response works
-    // make sure we're sending the data back with right type
-    if (messageQueue !== null) {
-      // res.end(messageQueue[0])
-      // dequeue();
-      // messageQueue = messages;
-      // somehow we need to call dequeue and change messagequeue
-      res.end(messageQueue.dequeue())//this is pass the first command into the body of the response
-      // and at the same time update the messages array
-      next();
-    } else {
-      res.end(); //send first command over to the client
-      next();
+    console.log('req.url', req.url);
+    if (req.url === '/') {
+      console;
+      res.writeHead(200, headers); // is this showing up in the response?
+      // call initialize with the messages array
+      // res.end(randomDirection()); // just checking to see the response works
+      // make sure we're sending the data back with right type
+      if (messageQueue !== null) {
+        // somehow we need to call dequeue and change messagequeue
+        res.end(messageQueue.dequeue()); //this passes the first command into the body of the response
+        // and at the same time update the messages array
+        next();
+      } else {
+        res.end('up'); //default for no saved keypresses
+        next();
+      }
     }
-    // feed one at a time to the get
-    // so we can dequeue every time we do it
-    // call initialize again to change message array
-    // console.log('RES', res);
+    var imageURL = /.\.jpg/;
+    if (imageURL.test(req.url)) {
+      fs.readFile(req.url, 'Base64', (err, data) => {
+        if (err) {
+          res.writeHead(404, headers); //throw 404
+          console.log(err);
+          res.end();
+          next();
+        } else {
+          //found
+          console.log('DATA', data);
+          res.writeHead(200, { 'Content-Type': 'image/jpg' });
+          res.end(data, 'Base64');
+          next();
+        }
+      });
     }
+  }
   // the following three lines were supplied to us, I just copied them into the block of the if statement I wrote on line 18. Using postman I was able to get the response to console log in the terminal with line 20
 
   // res.writeHead(200, headers);
